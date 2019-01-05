@@ -1,0 +1,335 @@
+/*
+ * Created on 26-Oct-2003
+ *
+ * To change the template for this generated file go to
+ * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
+ */
+package hla_past.io;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.EOFException;
+import java.io.IOException;
+import java.io.InvalidClassException;
+import java.io.NotSerializableException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.OptionalDataException;
+import java.io.StreamCorruptedException;
+
+/**
+ * @author Rob Minson
+ *
+ */
+public class Bytes {
+
+	/**
+	*   Get a byte[] representing the specified value, using 
+	*   standard Java serialization.
+	*   @param value the int to be serialized
+	*   @return the array representing the int 
+	*/
+	public static byte[] getBytes(int value) {
+	
+		try {
+			ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+			ObjectOutputStream out = new ObjectOutputStream(bytes);
+			out.writeInt(value);
+			out.flush();
+			return bytes.toByteArray();
+		} 
+		catch (IOException e) {
+			//ByteArrayOutputStreams do not throw exceptions
+			//it is thrown by ObjectOutputStreams to ensure 
+			//stability if more volatile streams are used
+		}
+		return new byte[0];
+	}
+
+	/**
+	*   Get the int value represented by this byte[], using 
+	*   standard Java serialisation
+	*   @param value a byte[] representing an int in standard Java serialisation
+	*   @return the int value represented
+	*   @throws IOException if the byte[] is not a standard Java representation
+	*   of an int type.
+	*/
+	public static int intValue(byte[] value) throws IOException {
+	
+		if (value == null)
+			System.out.println("refelcted byte array is null");
+		ByteArrayInputStream bytes = new ByteArrayInputStream(value);
+		ObjectInputStream in = getObjectIn(value);
+		int returnValue = 0;
+		try {
+			returnValue = in.readInt();
+		}
+		catch (EOFException e) {
+			throw new IOException();
+		}
+		return returnValue;
+	}
+
+	/**
+	*   Get a byte[] representing the specified value, using 
+	*   standard Java serialization.
+	*   @param value the double to be serialized
+	*   @return the array representing the double
+	*/
+	public static byte[] getBytes(double value) {
+	
+		try {
+			ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+			ObjectOutputStream out = new ObjectOutputStream(bytes);
+			out.writeDouble(value);
+			out.close();
+			return bytes.toByteArray();
+		} 
+		catch (IOException e) {}
+		return new byte[0];	
+	}
+
+	/**
+	*   Get the double value represented by this byte[], using 
+	*   standard Java serialisation
+	*   @param value a byte[] representing a double in standard Java serialisation
+	*   @return the double value represented
+	*   @throws IOException if the byte[] is not a standard Java representation
+	*   of a double type.
+	*/
+	public static double doubleValue(byte[] value) throws IOException {
+	
+		ByteArrayInputStream bytes = new ByteArrayInputStream(value);
+		ObjectInputStream in = getObjectIn(value);
+		double returnValue = 0;
+		try {
+			returnValue = in.readDouble();
+		}
+		catch (EOFException e) {
+			throw new IOException();
+		}
+		return returnValue;
+	}
+
+	/**
+	*   Get a byte[] representing the specified value, using 
+	*   standard Java serialization.
+	*   @param value the float to be serialized
+	*   @return the array representing the float
+	*/
+	public static byte[] getBytes(float value) {
+	
+		try {
+			ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+			ObjectOutputStream out = new ObjectOutputStream(bytes);
+			out.writeFloat(value);
+			out.close();
+			return bytes.toByteArray();
+		} 
+		catch (IOException e) {}
+		return new byte[0];	
+	}
+
+	/**
+	*   Get the float value represented by this byte[], using 
+	*   standard Java serialisation
+	*   @param value a byte[] representing a float in standard Java serialisation
+	*   @return the float value represented
+	*   @throws IOException if the byte[] is not a standard Java representation
+	*   of a float type.
+	*/
+	public static float floatValue(byte[] value) throws IOException {
+	
+		ByteArrayInputStream bytes = new ByteArrayInputStream(value);
+		ObjectInputStream in = getObjectIn(value);
+		float returnValue = 0;
+		try {
+			returnValue = in.readFloat();
+		}
+		catch (EOFException e) {
+			throw new IOException();
+		}
+		return returnValue;
+	}
+
+	/**
+	*   Get a byte[] representing the specified value, using 
+	*   standard Java serialization.
+	*   @param value the short to be serialized
+	*   @return the array representing the short
+	*/
+	public static byte[] getBytes(short value) {
+	
+		try {
+			ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+			ObjectOutputStream out = new ObjectOutputStream(bytes);
+			out.writeShort(value);
+			out.close();
+			return bytes.toByteArray();
+		} 
+		catch (IOException e) {}
+		return new byte[0];	
+	}
+
+	/**
+	*   Get the short value represented by this byte[], using 
+	*   standard Java serialisation
+	*   @param value a byte[] representing a short in standard Java serialisation
+	*   @return the short value represented
+	*   @throws IOException if the byte[] is not a standard Java representation
+	*   of a short type.
+	*/
+	public static short shortValue(byte[] value) throws IOException {
+	
+		ByteArrayInputStream bytes = new ByteArrayInputStream(value);
+		ObjectInputStream in = getObjectIn(value);
+		short returnValue = 0;
+		try {
+			returnValue = in.readShort();
+		}
+		catch (EOFException e) {
+			throw new IOException();
+		}
+		return returnValue;
+	}
+
+	/**
+	*   Get a byte[] representing the specified value, using 
+	*   standard Java serialization.
+	*   @param value the long to be serialized
+	*   @return the array representing the long
+	*/
+	public static byte[] getBytes(long value) {
+	
+		try {
+			ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+			ObjectOutputStream out = new ObjectOutputStream(bytes);
+			out.writeLong(value);
+			out.close();
+			return bytes.toByteArray();
+		} 
+		catch (IOException e) {}
+		return new byte[0];	
+	}
+
+	/**
+	*   Get the short value represented by this byte[], using 
+	*   standard Java serialisation
+	*   @param value a byte[] representing a short in standard Java serialisation
+	*   @return the short value represented
+	*   @throws IOException if the byte[] is not a standard Java representation
+	*   of a short type.
+	*/
+	public static long longValue(byte[] value) throws IOException {
+	
+		ByteArrayInputStream bytes = new ByteArrayInputStream(value);
+		ObjectInputStream in = getObjectIn(value);
+		long returnValue = 0;
+		try {
+			returnValue = in.readLong();
+		}
+		catch (EOFException e) {
+			throw new IOException();
+		}
+		return returnValue;
+	}
+	
+	/**
+	*   Get a byte[] representation of the specified object, using
+	*   standard Java serialisation.
+	*   @param obj the object to be serialized
+	*   @return the array representing the short
+	*   @throws NotSerializableException if the given object does not implement
+	*   the Serializable interface
+	*   @throws IOException if some other error occurs while reading the object
+	*/
+	public static byte[] getBytes(Object obj) 
+		throws NotSerializableException, IOException {
+
+		try {
+			ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+			ObjectOutputStream out = new ObjectOutputStream(bytes);
+			out.writeObject(obj);
+			out.close();
+			return bytes.toByteArray();
+		} 
+		catch (InvalidClassException e) {
+			throw new NotSerializableException(obj.getClass().toString());
+		}		
+	}
+
+	/**
+	*   Get the object represented by this byte[], using 
+	*   standard Java serialisation
+	*   @param value a byte[] representing an object in standard Java serialisation
+	*   @return the Object represented
+	*   @throws ClassNotFoundException if the current runtime does not contain the 
+	*   class of the the de-serialized object.
+	*   @throws InvalidClassException if the object is not a valid Class type for
+	*   this Java runtime.
+	*   @throws IOException if any other error is found in the byte[]
+	*/
+	public static Object objectValue(byte[] value)
+		throws ClassNotFoundException, InvalidClassException, IOException {
+		
+		ByteArrayInputStream bytes = new ByteArrayInputStream(value);
+		ObjectInputStream in = getObjectIn(value);
+		Object obj = null;
+		try {
+			obj = in.readObject();
+		}
+		catch (StreamCorruptedException e) {
+			throw new IOException();
+		}
+		catch (OptionalDataException e) {
+			throw new IOException();
+		}
+		return obj;
+	}	
+
+	/**
+	*   Get a byte[] representing the specified value, using 
+	*   standard Java serialization.
+	*   @param value the boolean to be serialized
+	*   @return the array representing the boolean
+	*/
+	public static byte[] getBytes(boolean b) {
+	
+		try {
+			ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+			ObjectOutputStream out = new ObjectOutputStream(bytes);
+			out.writeBoolean(b);
+			out.close();
+			return bytes.toByteArray();
+		} 
+		catch (IOException e) {}
+		return new byte[0];	
+	}
+
+	/**
+	*   Get the short value represented by this byte[], using 
+	*   standard Java serialisation
+	*   @param value a byte[] representing a short in standard Java serialisation
+	*   @return the short value represented
+	*   @throws IOException if the byte[] is not a standard Java representation
+	*   of a short type.
+	*/
+	public static boolean booleanValue(byte[] value) throws IOException {
+	
+		ByteArrayInputStream bytes = new ByteArrayInputStream(value);
+		ObjectInputStream in = getObjectIn(value);
+		boolean returnValue = false;
+		try {
+			returnValue = in.readBoolean();
+		}
+		catch (EOFException e) {
+			throw new IOException();
+		}
+		return returnValue;
+	}
+
+	private static ObjectInputStream getObjectIn(byte[] bytes) throws IOException {
+	
+		return new ObjectInputStream(new ByteArrayInputStream(bytes));
+	}
+}

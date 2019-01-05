@@ -1,0 +1,86 @@
+This is a setup guide for the RTI-1.3NGv6 held in SoCS and on MeSC
+
+On SoCS the installation is rooted at 
+
+	bham/pd/packages/rti/RTI-1.3NGv6/Linux-rh7.2-i386-gcc-3.0.2-opt-mt/
+	
+hereafter referred to as <rti>
+
+rtiexec support
+=================
+
+The rtiexec binary is the daemon executable and is located at 
+
+	<rti>/bin/rtiexec
+
+It requires both the .so's in <rti>/lib and gcc 3.0.2 in order to execute
+
+Both of these are placed in the LD_LIBRARY_PATH variable using the command setup RTI (which can be added to your .login file). However, this setup command does not append the paths to the variable, it overwrites them (something buggy in the proprietary script that came with the RTI) so make sure any other things you need in that path get set after the setup RTI command is called.
+
+When invoking rtiexec the -multicastDiscoveryEndpoint option can be passed. This argument must match up with the 'process section' of the .rid file used when invoking the federate (the fedex will print out which rid it's using at startup. A relevant snippet of a working rid is given below:
+
+ (ProcessSection
+  (RtiExecutive
+   ;;(RtiExecutiveEndpoint 147.188.194.140:42110)
+   ;; remember that rtiexec -multicastDiscoveryEndpoint flag must
+   ;; match this, or you'll get NameService errors
+   (RtiExecutiveMulticastDiscoveryEndpoint 224.9.9.2:65432)
+   ;;(RtiExecutiveMulticastDiscoveryEndpoint 224.9.9.2:22605)
+  )
+
+A word of warning. If this argument is not passed, the default (commented out in the rid above) is used. In SoCS this endpoint doesn't seem to work. You'll know if this has happened as the fedex will crash with a naming service error. The 65432 port I believe was chosen randomly by Mike/Ton years ago and seems to still work as of 2007.
+
+rtiConsole support
+==================
+
+The rtiConsole binary is a management shell for (remotely) examining a running instance of the rtiexec process.
+
+It requires earlier versions of both libhistory.so.4 and libreadline.so.4. The current version in SoCS are .5, but the executable seems to run fine just by creating a symlink to the current files but with a .4 name.
+
+The rtiConsole needs to be told where to find the rtiexec process to run so, again, you need to pass the multicastDiscoveryEndpoint argument.
+
+fedex support
+==================
+
+The fedex binary should run fine using the same variables as rtiexec above
+
+To use Java federates, support for the java bindings will be needed. This requires two things:
+
+	- The class files for the bindings
+	- The shared object libraries that the JVM calls in to directly
+	
+Both of these are contained in the following .sh file which, despite its extension is a self-extracting archive:
+
+	~rzm/shared/lib/rti-1.3ngv6-linux-rh7.2.sh
+
+This can be run directly but in order to extract, the 'compress' command must be in the shell's path, in SoCS this can be found here:
+
+	/usr/bin/compress-dummy (it's considered a legacy binary)
+	
+Once extracted (to <bindings>) make sure your JVM is invoked with: 
+
+	- <bindings>/apps/javaBindings/classes in the classpath (either using -cp option or adding it as a setenv somewhere)
+	- The option -Djava.library.path=<bindings>/apps/javaBinding/lib
+
+See above for details on using rid files to locate the rtiexec process.
+
+summary
+==================
+
+The following actions should be enough to setup an account in SoCS to run all the elements of our RTI:
+
+1) Create a directory ~/lib
+2) Go to ~/lib and do 
+	ln -s /usr/lib/libreadline.so libreadline.so.4
+	ln -s /usr/lib/libhistory.so libhistory.so.4
+3) Add the following lines to your ~/.login file
+	setup RTI
+	setenv LD_LIBRARY_PATH {$LD_LIBRARY_PATH}:~/lib
+	alias rtiexec "rtiexec -multicastDiscoveryEndpoint 224.9.9.2:65432"
+4) Test it out by opening two terminals and doing:
+		rtiexec
+	with one and:
+		rtiConsole -multicastDiscoverEndpoing 224.9.9.2:65432
+	with the other.
+	
+If rtiexec runs and rtiConsole gives you a prompt, everything is working fine.

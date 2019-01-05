@@ -1,0 +1,51 @@
+runs: 1
+
+NumAgents {
+	
+	set: 2
+}
+
+ObstacleDensity {
+	
+	set: 0
+}
+
+ObstacleSize {
+
+	set: 0
+}
+
+WorldSize {
+
+	set: 50
+}
+
+AgeingRate {
+
+	set: 0
+}
+
+GenerationRate {
+
+	set: 0
+}
+
+HoleAgeing {
+
+	set_boolean: false
+}
+
+HoleGeneration {
+
+	set_boolean: false
+}
+
+TileAgeing {
+
+	set_boolean: false
+}
+
+TileGeneration {
+
+	set_boolean: false
+}

@@ -1,0 +1,65 @@
+;; this is an example of a small RID file.  Please see Sample-RTI.rid
+;; from the distribution for an exhaustive RID file which includes
+;; descriptions of the parameters.
+
+(RTI
+ (ProcessSection
+  (RtiExecutive
+   ;;(RtiExecutiveEndpoint 147.188.194.140:42110)
+
+   ;; remember that rtiexec -multicastDiscoveryEndpoint flag must
+   ;; match this, or you'll get NameService errors
+   (RtiExecutiveMulticastDiscoveryEndpoint 224.9.9.2:65432)
+   ;;(RtiExecutiveMulticastDiscoveryEndpoint 224.9.9.2:22605)
+  )
+ )
+
+ (FederationSection
+  (Networking
+   (BundlingOptions
+    (UDP
+     ;;(MaxTimeBeforeSendInSeconds 0.005)
+     ;;(MaxBytesBeforeSend    63000)
+    )
+    (TCP
+     ;;(MaxTimeBeforeSendInSeconds 0.005)
+     ;;(MaxBytesBeforeSend    63000)
+    )
+   )
+   (MulticastOptions
+    ;; having different federations on network use different ranges of
+    ;; multicast addresses will help performance
+    (BaseAddress 224.100.0.0)
+    ;;(MaxAddress 239.255.255.255)
+   )
+   (FederationExecutive
+    (FilenameToRedirectStdout fedex.stdout)
+    (FilenameToRedirectStderr fedex.stderr)
+    )
+  )
+
+  (Advisories
+   (InteractionRelevanceAdvisories Disabled
+    (AdvisorySwitchDefault Disabled)
+   )
+   (ClassRelevanceAdvisories Disabled
+    (AdvisorySwitchDefault Disabled)
+   )
+   (AttributeRelevanceAdvisories Disabled
+    (AdvisorySwitchDefault Disabled)
+   )
+   (AttributeScopeAdvisories Enabled
+    (AdvisorySwitchDefault Disabled)
+   )
+  )
+
+  (TimeManagement
+   (EventRetractionHandleCacheOptions
+    ;; the next two options will disable event retractions, which is
+    ;; OK since helloworld doesn't use them
+    (MinimumCacheSizeBeforePerformingPurge 0)
+    (NumberOfEventRetractionHandlesToCreateBeforeStartingNewPurgeCycle 0)
+   )
+  )
+ )
+)

@@ -1,0 +1,74 @@
+HLA_RePast code overdview
+
+
+### Understanding the Code ###
+
+HLA_RePast is a large, but fairly repetitive codebase.
+
+It can be understood fairly simply by understanding 3 main components of the engine:
+
+1) The manager package
+
+This package couples up a RePast model to the federation to begin with. This occurs when a RePast model creates a LocalManager although most of the code is in individual component classes (see using Coupler and Advancer). The federates use a simple algorithms of knowing how big the federation should be in total, then executing:
+
+- try to create federation
+- if successful
+	wait for num-1 others to join
+	send notification to all
+- join federation
+
+DistributedSchedule, is the subclass of the RePast Schedule class which adds the RTI calls necessary to constrain and synchronise local execution.
+
+CallbackBuffer is essentially HLA_RePast's implementation of the FederateAmbassador class. It buffers all callbacks and continually executes the handler code on a separate thread (in fact this handler thread enters from DistributedSchedule.execute() at the appropriate point during a single RePast tick)
+
+2) The object package
+
+This is the real core of the middleware, its main job being to register PublicObjects and present proxies in the form of RemoteObjects. The main work of doing this is handled by 3 classes: LocalBase, RemoteBase and ProxyList.
+
+The LocalBase accepts new instances, records their existence (in a weak reference, see LookupReference and ReferenceTable), then registers them with the RTI, issuing initial updates as it does so
+
+The RemoteBase must discover objects and then present them to the model as RemoteObject instances. The RemoteBase does this by mapping from HLA integer class identifiers and Java Class objects, then using reflection to instantiate new instances of RemoteObject subclasses. These are then presented in the form of ProxyLists, one for each class in the simulation.
+
+In order for this to work, RemoteObjects cannot be handed to the model immediately upon discovery, first a valid set of values for the object's variables must be obtained. In order to detect when this has occured, a ProxyList stores two lists of objects - visible and invisible ones - a RemoteObject may pass in to the visible list only once it has a full set of values for its variables.
+
+3) The object.variables package
+
+Although the RemoteBase and LocalBase do the leg-work of arranging updates in to the right variables and the right objects, the harder task of conflict resolution is implemented in the PublicVariable class and its subclasses. 
+
+Three flavours exist: ExclusiveVariable, CumulativeVariable and ViewableVariable. See the journal paper for details on their semantics.
+
+In order to make the necessary ownership management calls and blocking for responses, each one uses the checkOwnership method.
+
+
+
+#### Using HLA_RePast and (possibly) improving the code ####
+
+
+As I explain below, the codebase is currently very dependent on the (closed) version of the RTI 1.3 that we have. I can happily supply this to you along with fairly detailed usage notes (specific to the Birmingham system, though probably useful for yours too), although it is simply the binaries and the java bindings.
+
+The testrti.BasicTest class is probably the simplest HLA_RePast model it is possible to make that still uses all of the functionality of the system. There are a lot of other pieces of 'test' code in there, but turning manager.Globals.VERBOSE on and running that class is probably the best way to get to grips with what the system does. I'm sorry there isn't more documentation, and more useable example code, I wish I had the time.
+
+In terms of the usability of the code, currently there are two main problems with the way things are done:
+
+1) RTI-Dependence.
+
+This code was written very much without portability in mind. It runs on one installation of one version of the RTI. A (very) preliminary attempt has been made to collect the RTI-Dependent code together in one place, the rtidep package represents this effort.
+
+Throughout where communication with the RTI is required I have used the raw hla.rti13.java1.EncodingHelpers class which afaik is not an implementation of anything more abstract and is 100% RTI 1.3 specific. All of these calls would need to be changed if porting to 1516.
+
+Finally, and perhaps most arduously, this code was written for non-reentrant RTI's. This means prolific use of tick (search for references to rtidep.Threads.RTI_TICK) along with a fair amount of threads running simultaneously in an attempt to prevent re-entrance.
+
+2) Mutual Exclusion via Ownership Management
+
+Ownership management forms the basis of the conflict resolution for simultaneous updates in HLA_RePast. Unfortunately the HLA spec does not force OM to be time-synchronised, thus leading to a race condition within a tick. This means that in terms of detecting logical time *conflict*:
+
+a) two federates can own a variable during the same logical time (false negative)
+b) two federates may be prevented owning a variable at different logical times (false positive)
+
+All the code for conflict resolution (i.e. ObjectLookup.checkOwnership) was written before we realised that this was the case. The situation as far as I can ascertain from tests and from looking at the (multi-threaded) code in detail is:
+
+- ViewableVariables work (obviously)
+- ExclusiveVariables work as in you don't get situation (a) but they are broken in the sense that you do get situation (b). So agents won't, for example, both believe they have picked up a prize, but they may both fail to pick it up at all, both having been wrongly excluded.
+- CumulativeVariables don't work at all, as in they will eventually diverge in value, everyone believing them to have a different value and incrementing them one amount or another based purely on the outcome of the race condition at their local node.
+
+Furthermore, this code is very messy, it has variables passing references to themselves up through the inheritance stack and around the components just in order for the end of the chain to do an instanceof and call one method or the other based on that. It is horrendously inefficient and is a design nightmare. I would re-write it all to do something more sensible if I had the time.

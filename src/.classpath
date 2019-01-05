@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path=""/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="/home/pg/rzm/work/hlarepast/trunk/lib/colt.jar"/>
+	<classpathentry kind="lib" path="/home/pg/rzm/work/hlarepast/trunk/lib/hlalib.jar"/>
+	<classpathentry kind="lib" path="/home/pg/rzm/work/hlarepast/trunk/lib/repast.jar"/>
+	<classpathentry kind="lib" path="/home/pg/rzm/work/hlarepast/trunk/lib/testrti.jar"/>
+	<classpathentry kind="output" path=""/>
+</classpath>
