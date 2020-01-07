@@ -2,12 +2,11 @@
 
 # Installation #
 
-To use HLA_RePast in its current form you first need to install the 1.3 NG rti. This can be supplied on request.
+HLA_RePast in its current form you was developed on 1.3 NG rti. This cversion i snow discontinued but there are other RTI nersions available.
 
-In addition you need the Java bindings to the RTI, these are supplied in the lib folder and *are not* covered by the GPL, unlike HLA_RePast itself.
+In addition you need the Java bindings to the RTI, these are supplied in the lib folder and *are not* covered by the licence, unlike HLA_RePast itself.
 
-A document describing the installation and usage of this RTI and its bindings can be found in the rti-setup-howto.txt file (although this is 100% specific to the 
-system setup at the School of Computer Science at the University of Birmingham. In short: your mileage may vary).
+A document describing the installation and usage of this RTI and its bindings can be found in the rti-setup-howto.txt file (although this is 100% specific to the original system setup at the School of Computer Science at the University of Birmingham. In short: your mileage may vary).
 
 To compile HLA_RePast, ensure the jar files in the lib directory are in your classpath and compile from the src directory.
 
@@ -29,12 +28,5 @@ Please see the code_overview.txt for a fairly complete overview of the entire co
 
 # End Note #
 
-Please note that HLA_RePast is free software under the terms of the GNU General Public License.
-
-comments and questions can be directed to:
-
-rzm@cs.bham.ac.uk
-or
-gkt@cs.bham.ac.uk
 
 
