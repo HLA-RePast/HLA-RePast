@@ -5,7 +5,7 @@ HLA_RePast code overdview
 
 HLA_RePast is a large, but fairly repetitive codebase.
 
-It can be understood fairly simply by understanding 3 main components of the engine:
+It can be understood fairly simply by understanding 3 main components of the engine:   
 
 1) The manager package
 
@@ -44,9 +44,9 @@ In order to make the necessary ownership management calls and blocking for respo
 #### Using HLA_RePast and (possibly) improving the code ####
 
 
-As I explain below, the codebase is currently very dependent on the (closed) version of the RTI 1.3 that we have. I can happily supply this to you along with fairly detailed usage notes (specific to the Birmingham system, though probably useful for yours too), although it is simply the binaries and the java bindings.
+the codebase is currently very dependent on the specific version of RTI (1.3) originaly used for its development. 
 
-The testrti.BasicTest class is probably the simplest HLA_RePast model it is possible to make that still uses all of the functionality of the system. There are a lot of other pieces of 'test' code in there, but turning manager.Globals.VERBOSE on and running that class is probably the best way to get to grips with what the system does. I'm sorry there isn't more documentation, and more useable example code, I wish I had the time.
+The testrti.BasicTest class is probably the simplest HLA_RePast model it is possible to make that still uses all of the functionality of the system. There are a lot of other pieces of 'test' code in there, but turning manager.Globals.VERBOSE on and running that class is probably the best way to get to grips with what the system does. 
 
 In terms of the usability of the code, currently there are two main problems with the way things are done:
 
@@ -54,7 +54,7 @@ In terms of the usability of the code, currently there are two main problems wit
 
 This code was written very much without portability in mind. It runs on one installation of one version of the RTI. A (very) preliminary attempt has been made to collect the RTI-Dependent code together in one place, the rtidep package represents this effort.
 
-Throughout where communication with the RTI is required I have used the raw hla.rti13.java1.EncodingHelpers class which afaik is not an implementation of anything more abstract and is 100% RTI 1.3 specific. All of these calls would need to be changed if porting to 1516.
+Throughout where communication with the RTI is required the raw hla.rti13.java1.EncodingHelpers class has been used which afaik is not an implementation of anything more abstract and is 100% RTI 1.3 specific. All of these calls would need to be changed if porting to another RTI.
 
 Finally, and perhaps most arduously, this code was written for non-reentrant RTI's. This means prolific use of tick (search for references to rtidep.Threads.RTI_TICK) along with a fair amount of threads running simultaneously in an attempt to prevent re-entrance.
 
@@ -65,10 +65,10 @@ Ownership management forms the basis of the conflict resolution for simultaneous
 a) two federates can own a variable during the same logical time (false negative)
 b) two federates may be prevented owning a variable at different logical times (false positive)
 
-All the code for conflict resolution (i.e. ObjectLookup.checkOwnership) was written before we realised that this was the case. The situation as far as I can ascertain from tests and from looking at the (multi-threaded) code in detail is:
+All the code for conflict resolution (i.e. ObjectLookup.checkOwnership) was written before we realised this was the case. The situation as far as can be can ascertained from tests and from looking at the (multi-threaded) code in detail is:
 
 - ViewableVariables work (obviously)
 - ExclusiveVariables work as in you don't get situation (a) but they are broken in the sense that you do get situation (b). So agents won't, for example, both believe they have picked up a prize, but they may both fail to pick it up at all, both having been wrongly excluded.
 - CumulativeVariables don't work at all, as in they will eventually diverge in value, everyone believing them to have a different value and incrementing them one amount or another based purely on the outcome of the race condition at their local node.
 
-Furthermore, this code is very messy, it has variables passing references to themselves up through the inheritance stack and around the components just in order for the end of the chain to do an instanceof and call one method or the other based on that. It is horrendously inefficient and is a design nightmare. I would re-write it all to do something more sensible if I had the time.
+Furthermore, the current code is an academic artifact. it can be substrantially impoved to produce something cleaner and efficient (e.g. there are variables passing references to themselves up through the inheritance stack and around the components just in order for the end of the chain to do an instanceof and call one method or the other based on that). Anyone with the time and energy to do this is more than welcome!
