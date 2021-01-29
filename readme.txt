@@ -2,7 +2,7 @@
 
 # Installation #
 
-HLA_RePast in its current form you was developed on 1.3 NG rti. This cversion i snow discontinued but there are other RTI versions available.
+HLA_RePast in its current form you was developed on 1.3 NG rti. This version is now discontinued but there are other RTI versions available.
 
 In addition you need the Java bindings to the RTI, these are supplied in the lib folder and *are not* covered by the licence, 
 unlike HLA_RePast itself.
